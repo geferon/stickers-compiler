@@ -1,0 +1,223 @@
+<mat-expansion-panel style="margin-bottom: 20px;"
+	[expanded]="SettingsExpanded"
+	(opened)="SettingsExpanded = true"
+	(closed)="SettingsExpanded = false">
+	<mat-expansion-panel-header>
+		<mat-panel-title>
+			Settings
+		</mat-panel-title>
+		<mat-panel-description>
+			These are the settings of the sticker generator.
+		</mat-panel-description>
+	</mat-expansion-panel-header>
+
+	<mat-tab-group dynamicHeight>
+		<mat-tab label="Grid">
+			<p style="margin-top: 12px;">
+				<mat-form-field>
+					<mat-label>Grid Width</mat-label>
+					<input matInput placeholder="3" type="number" required [(ngModel)]="GridWidth" (click)="onSizeChanged()" />
+					<mat-hint>Width that the grid will use.</mat-hint>
+					<!-- <mat-error *ngIf="hasError('Port', 'numberLimit')">The port should be a number between 0 and 65535.</mat-error> -->
+				</mat-form-field>
+			</p>
+			<p>
+				<mat-form-field>
+					<mat-label>Grid Height</mat-label>
+					<input matInput placeholder="2" type="number" required [(ngModel)]="GridHeight" (click)="onSizeChanged()" />
+					<mat-hint>Height that the grid will use.</mat-hint>
+					<!-- <mat-error *ngIf="hasError('Port', 'numberLimit')">The port should be a number between 0 and 65535.</mat-error> -->
+				</mat-form-field>
+			</p>
+			<p>
+				<mat-form-field>
+					<mat-label>Margin</mat-label>
+					<input matInput placeholder="2" type="number" required [(ngModel)]="ItemsMargin" />
+					<span matSuffix>px</span>
+					<mat-hint>Margin that each item will have in pixels.</mat-hint>
+					<!-- <mat-error *ngIf="hasError('Port', 'numberLimit')">The port should be a number between 0 and 65535.</mat-error> -->
+				</mat-form-field>
+			</p>
+			<p>
+				<mat-form-field>
+					<mat-label>Item Size</mat-label>
+					<input matInput placeholder="512" type="number" required [(ngModel)]="ItemsMaxSize" />
+					<span matSuffix>px</span>
+					<mat-hint>Size of the items in pixels. It is recommended to set the size of the items to the same size of the images.</mat-hint>
+					<!-- <mat-error *ngIf="hasError('Port', 'numberLimit')">The port should be a number between 0 and 65535.</mat-error> -->
+				</mat-form-field>
+			</p>
+		</mat-tab>
+
+		<mat-tab label="Style">
+
+			<div fxLayout="row" class="background-gradient-settings">
+				<div fxFlex="50%">
+					<h4 style="margin-top: 12px; margin-bottom: 4px;">Background color</h4>
+					<p>
+						<input required [(colorPicker)]="BackgroundColor" [cpUseRootViewContainer]="true"
+							[style.background]="BackgroundColor" />
+						<br />
+						<mat-hint>Background color that the whole frame will have.</mat-hint>
+					</p>
+
+					<p>
+						<mat-form-field>
+							<mat-label>
+								Background Type
+							</mat-label>
+							<mat-select [(ngModel)]="BackgroundType">
+								<mat-option [value]="BackgroundTypes.FlatBackground">Flat background</mat-option>
+								<mat-option [value]="BackgroundTypes.GradientTopBottom">Top to bottom gradient</mat-option>
+								<mat-option [value]="BackgroundTypes.GradientLeftRight">Left to right gradient</mat-option>
+								<mat-option [value]="BackgroundTypes.GradientTopLeftBottomRight">Top left to bottom right gradient</mat-option>
+								<mat-option [value]="BackgroundTypes.GradientTopRightBottomLeft">Top right to bottom left gradient</mat-option>
+							</mat-select>
+							<mat-hint>The type of background that the card will have.</mat-hint>
+						</mat-form-field>
+					</p>
+					<div *ngIf="BackgroundType != BackgroundTypes.FlatBackground">
+						<!-- Gotta use a for i = 0; i < length due to angular re-doing this on variable change, length wont change -->
+						<p *ngFor="let item of [].constructor(BackgroundSecondaryColors.length); let i = index">
+							<input required
+								[(colorPicker)]="BackgroundSecondaryColors[i]"
+								[cpUseRootViewContainer]="true"
+								[style.background]="BackgroundSecondaryColors[i]" />
+							<button mat-icon-button (click)="BackgroundSecondaryColors.splice(i, 1)">
+								<mat-icon>delete</mat-icon>
+							</button>
+							<br />
+							<mat-hint>Gradient color #{{i + 1}}.</mat-hint>
+						</p>
+						<p>
+							<button mat-raised-button color="accent"
+								(click)="BackgroundSecondaryColors.push(BackgroundSecondaryColors.length > 0 ?
+								BackgroundSecondaryColors[BackgroundSecondaryColors.length - 1] : BackgroundColor)">
+								Add color
+							</button>
+						</p>
+					</div>
+				</div>
+				<div fxFlex="50%">
+					<h4 style="margin-top: 12px; margin-bottom: 4px;">Item background color</h4>
+					<p>
+						<input required [(colorPicker)]="ItemBackgroundColor" [cpUseRootViewContainer]="true"
+							[style.background]="ItemBackgroundColor" />
+						<br />
+						<mat-hint>Background color that each item will have.</mat-hint>
+					</p>
+
+					<p>
+						<mat-form-field>
+							<mat-label>
+								Item Background Type
+							</mat-label>
+							<mat-select [(ngModel)]="ItemBackgroundType">
+								<mat-option [value]="BackgroundTypes.FlatBackground">Flat background</mat-option>
+								<mat-option [value]="BackgroundTypes.GradientTopBottom">Top to bottom gradient</mat-option>
+								<mat-option [value]="BackgroundTypes.GradientLeftRight">Left to right gradient</mat-option>
+								<mat-option [value]="BackgroundTypes.GradientTopLeftBottomRight">Top left to bottom right gradient</mat-option>
+								<mat-option [value]="BackgroundTypes.GradientTopRightBottomLeft">Top right to bottom left gradient</mat-option>
+							</mat-select>
+							<mat-hint>The type of background that each item will have.</mat-hint>
+						</mat-form-field>
+					</p>
+					<div *ngIf="ItemBackgroundType != BackgroundTypes.FlatBackground">
+						<p *ngFor="let item of [].constructor(ItemBackgroundSecondaryColors.length); let i = index">
+							<input required
+								[(colorPicker)]="ItemBackgroundSecondaryColors[i]"
+								[cpUseRootViewContainer]="true"
+								[style.background]="ItemBackgroundSecondaryColors[i]" />
+							<button mat-icon-button (click)="ItemBackgroundSecondaryColors.splice(i, 1)">
+								<mat-icon>delete</mat-icon>
+							</button>
+							<br />
+							<mat-hint>Gradient color #{{i + 1}}.</mat-hint>
+						</p>
+						<p>
+							<button mat-raised-button color="accent"
+								(click)="ItemBackgroundSecondaryColors.push(ItemBackgroundSecondaryColors.length > 0 ?
+								ItemBackgroundSecondaryColors[ItemBackgroundSecondaryColors.length - 1] : BackgroundColor)">
+								Add color
+							</button>
+						</p>
+					</div>
+				</div>
+			</div>
+		</mat-tab>
+	</mat-tab-group>
+</mat-expansion-panel>
+
+<section>
+	<h2>Images</h2>
+	<a mat-raised-button class="add-file-button" color="primary">
+		Add
+		<input type="file" accept="image/*" multiple (change)="imageUpdated($event)" />
+	</a>
+	<div class="image-list-base">
+		<!-- (cdkDropListDropped)="itemDropped($event)" -->
+		<!--  (dndMoved)="itemDropped()" -->
+		<!-- [dndList] [dndModel]="ImageItems" -->
+		<!-- [dndDraggable] [dndType]="'item'" [dndObject]="item" -->
+		<div class="image-list" dragula="IMAGES" [(dragulaModel)]="ImageItems">
+			<div class="image-item" *ngFor="let item of ImageItems"
+				[ngSwitch]="item.type"
+				[fxFlex]="(100 / GridWidth) + '%'"
+				[ngClass]="'image-item-' + item.type">
+				<ng-container *ngSwitchCase="'empty'">
+					This item is empty
+				</ng-container>
+				<ng-container *ngSwitchCase="'image'">
+					<img [src]="item.imageURL" />
+					<p>{{item.image.name}}</p>
+					<div class="buttons-row">
+						<button mat-icon-button (click)="deleteImageItem(item)">
+							<mat-icon>delete</mat-icon>
+						</button>
+					</div>
+				</ng-container>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section>
+	<h2>Preview</h2>
+	<div class="image-holder" fxLayout="row wrap" fxLayoutAlign="space-between" #imageholder
+	[style.background-image]="getGenericBackground()"
+	[style.background-color]="BackgroundColor"
+	[style.padding]="ItemsMargin + 'px'"
+	[style.padding-bottom]="0"
+	[style.width]="(GridPixelsWidth() + ItemsMargin * 2) + 'px'">
+		<div class="image-holder-item"
+			*ngFor="let item of ImageItems; index as i"
+			[style.background-image]="getItemBackground(i, item)"
+			[style.background-color]="ItemBackgroundColor"
+			[style.background-position]="-(i % GridWidth * (ItemsMaxSize + ItemsMargin)) + 'px '
+			+ -(floor(i / GridWidth) * (ItemsMaxSize + ItemsMargin)) + 'px'"
+			[style.background-size]="GridPixelsWidth() + 'px ' + GridPixelsHeight() + 'px'"
+			[style.margin-bottom]="ItemsMargin + 'px'"
+			[style.height]="ItemsMaxSize + 'px'"
+			[style.width]="ItemsMaxSize + 'px'">
+
+			<!-- [fxFlex]="(100 / GridWidth) + '%'" -->
+			<ng-container *ngIf="item.type == 'image'">
+				<img [src]="item.imageURL" />
+			</ng-container>
+		</div>
+	</div>
+</section>
+
+<section>
+	<p>
+		<button mat-raised-button color="primary" (click)="generateImage()">
+			Generate
+		</button>
+	</p>
+	<p *ngIf="generatedImage">
+		<img [src]="generatedImage" />
+	</p>
+	<p *ngIf="generatedImage">
+		To download this image, right click or hold your cursor over it, and press <b>save as</b>.
+	</p>
+</section>
